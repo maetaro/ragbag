@@ -1,5 +1,5 @@
 fn main() {
-    let x = vec![1, 2, 3];
+    let x = vec![1, 2, 3,4,5,6,7,8,9,10];
     let y = shuffle(x);
     assert_eq!(y.len(), 3);
 }
@@ -19,14 +19,10 @@ fn shuffle(x: Vec<i32>) -> Vec<i32> {
     }
     let mut i = 0;
     for index in tmp {
-        i += 1;
         let elem = x[i];
         y[index] = elem;
+        i += 1;
     }
-    // for elem in x {
-    //     let index = rng.gen_range(0..len);
-    //     y[index] = elem;
-    // }
     return y;
 }
 
