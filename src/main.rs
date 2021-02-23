@@ -17,16 +17,9 @@ fn shuffle(x: Vec<i32>) -> Vec<i32> {
         let i = rng.gen_range(0..len);
         tmp.insert(i);
     }
-    let mut i = 0;
-    for index in tmp {
-        i += 1;
-        let elem = x[i];
-        y[index] = elem;
+    for (i, v) in tmp.iter().enumerate() {
+        y[i] = x[*v];
     }
-    // for elem in x {
-    //     let index = rng.gen_range(0..len);
-    //     y[index] = elem;
-    // }
     return y;
 }
 
@@ -44,8 +37,9 @@ mod tests {
 
     #[test]
     fn shuffle1() {
-        let mut x = vec![1, 2, 3];
+        let x = vec![1, 2, 3];
         let y = shuffle(x);
+		println!("{}", y.iter().fold(0, |sum, a| sum + a));
         assert_eq!(y.len(), 3);
         assert_eq!(y.iter().fold(0, |sum, a| sum + a), 6);
     }
