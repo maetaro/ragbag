@@ -39,7 +39,6 @@ mod tests {
     fn shuffle1() {
         let x = vec![1, 2, 3];
         let y = shuffle(x);
-		println!("{}", y.iter().fold(0, |sum, a| sum + a));
         assert_eq!(y.len(), 3);
         assert_eq!(y.iter().fold(0, |sum, a| sum + a), 6);
     }
