@@ -54,7 +54,7 @@ pub fn average(values: Vec<i32>) -> f32 {
 ///
 /// ```
 /// use ragbag::order_by;
-/// let result = order_by(vec![10, 8, 3, 2], &|a: i32, b: i32| return a < b);
+/// let result = order_by(vec![10, 8, 3, 2], &|a: i32, b: i32| a < b);
 /// assert_eq!(result, vec![2, 3, 8, 10]);
 /// ```
 pub fn order_by<F: Fn(i32, i32) -> bool>(list: Vec<i32>, f: &F) -> Vec<i32> {
@@ -110,6 +110,6 @@ mod tests {
 	fn order_by1(){
 		let expected = vec![2,3,4,5,6];
 		let actual = vec![4,3,2,5,6];
-		assert_eq!(order_by(actual, &|a: i32, b: i32| return a < b), expected);
+		assert_eq!(order_by(actual, &|a: i32, b: i32| a < b), expected);
 	}
 }
