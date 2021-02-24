@@ -82,7 +82,7 @@ pub fn order_by<F: Fn(i32, i32) -> bool>(list: Vec<i32>, f: &F) -> Vec<i32> {
 	concat.append(sorted_left);
 	concat.append(sorted_right);
 
-	return concat;
+	concat
 }
 
 #[cfg(test)]
