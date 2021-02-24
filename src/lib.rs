@@ -44,7 +44,8 @@ pub fn average(values: Vec<i32>) -> f32 {
 	values.iter().sum::<i32>() as f32 / values.len() as f32
 }
 
-/// Returns a sort of collection.
+/// Returns a sorted of collection.
+/// using quick sort.
 ///
 /// # Arguments
 ///
@@ -53,14 +54,14 @@ pub fn average(values: Vec<i32>) -> f32 {
 /// # Examples
 ///
 /// ```
-/// use ragbag::order_by;
-/// let result = order_by(vec![10, 8, 3, 2], &|a: i32, b: i32| a < b);
-/// assert_eq!(result, vec![2, 3, 8, 10]);
+/// use ragbag::qsort;
+/// let result = vec![3,2,1];
+/// assert_eq!(qsort(&result, &|a, b| a < b), vec![1,2,3]);
 /// ```
-pub fn order_by<F: Fn(i32, i32) -> bool>(list: Vec<i32>, f: &F) -> Vec<i32> {
+pub fn qsort<F: Fn(i32, i32) -> bool>(list: &Vec<i32>, f: &F) -> Vec<i32> {
 	let len = list.len();
 	if len <= 1 {
-		return list;
+		return list.clone();
 	}
 	let mut rng = rand::thread_rng();
 	let piv_i = rng.gen_range(0..len);
@@ -68,7 +69,7 @@ pub fn order_by<F: Fn(i32, i32) -> bool>(list: Vec<i32>, f: &F) -> Vec<i32> {
 	let mut left: Vec<i32> = Vec::new();
 	let mut right: Vec<i32> = Vec::new();
 
-	for i in list {
+	for i in list.clone() {
 		if f(piv, i) {
 			right.push(i);
 		}else{
@@ -77,12 +78,21 @@ pub fn order_by<F: Fn(i32, i32) -> bool>(list: Vec<i32>, f: &F) -> Vec<i32> {
 	}
 
 	let mut concat: Vec<i32> = Vec::new();
-	let sorted_left = &mut  order_by(left, f);
-	let sorted_right = &mut order_by(right, f);
+	let sorted_left =  &mut qsort(&left, f);
+	let sorted_right = &mut qsort(&right, f);
 	concat.append(sorted_left);
 	concat.append(sorted_right);
 
 	concat
+}
+
+trait OrderExt {
+    fn order_by<F: Fn(i32, i32) -> bool>(&mut self, f: &F);
+}
+impl OrderExt for Vec<i32> {
+	fn order_by<F: Fn(i32, i32) -> bool>(&mut self, f: &F) {
+		*self = qsort(self, f).clone();
+	}
 }
 
 #[cfg(test)]
@@ -109,7 +119,8 @@ mod tests {
 	#[test]
 	fn order_by1(){
 		let expected = vec![2,3,4,5,6];
-		let actual = vec![4,3,2,5,6];
-		assert_eq!(order_by(actual, &|a: i32, b: i32| a < b), expected);
+		let mut actual = vec![4,3,2,5,6];
+		actual.order_by(&|a: i32, b: i32| a < b);
+		assert_eq!(actual, expected);
 	}
 }
