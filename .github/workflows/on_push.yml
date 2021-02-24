@@ -55,5 +55,5 @@ jobs:
           git remote set-url origin git@github.com:maetaro/maetaro.github.io.git
           git config remote.origin.url "git@github.com:maetaro/maetaro.github.io.git"
           git add ragbag
-          git commit -m "auto rebuilding site"
-          git push origin master || true
+          git commit -m "auto rebuilding site" || true
+          git push origin master:master || true
