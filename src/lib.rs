@@ -60,8 +60,8 @@ mod tests {
     #[test]
     fn average1() {
         let x = vec![1, 2, 3];
-        let y: f32 = average(x);
-        let expected: f32 = 2.0;
-        assert_eq!(y, expected);
+        let y = average(x);
+        let error_margin = f32::EPSILON;
+        assert!((y - 2.0f32).abs() < error_margin);
     }
 }
