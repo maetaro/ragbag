@@ -19,4 +19,4 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
     - name: Run doc
-      run: cargo doc --verbose
+      run: cargo doc --no-deps --document-private-items
