@@ -58,10 +58,10 @@ pub fn average(values: Vec<i32>) -> f32 {
 /// let result = vec![3,2,1];
 /// assert_eq!(qsort(&result, &|a, b| a < b), vec![1,2,3]);
 /// ```
-pub fn qsort<F: Fn(i32, i32) -> bool>(list: &Vec<i32>, f: &F) -> Vec<i32> {
+pub fn qsort<F: Fn(i32, i32) -> bool>(list: &[i32], f: &F) -> Vec<i32> {
 	let len = list.len();
 	if len <= 1 {
-		return list.clone();
+		return list.to_owned();
 	}
 	let mut rng = rand::thread_rng();
 	let piv_i = rng.gen_range(0..len);
@@ -69,7 +69,7 @@ pub fn qsort<F: Fn(i32, i32) -> bool>(list: &Vec<i32>, f: &F) -> Vec<i32> {
 	let mut left: Vec<i32> = Vec::new();
 	let mut right: Vec<i32> = Vec::new();
 
-	for i in list.clone() {
+	for i in list.to_owned() {
 		if f(piv, i) {
 			right.push(i);
 		}else{
@@ -91,7 +91,7 @@ trait OrderExt {
 }
 impl OrderExt for Vec<i32> {
 	fn order_by<F: Fn(i32, i32) -> bool>(&mut self, f: &F) {
-		*self = qsort(self, f).clone();
+		*self = qsort(self, f);
 	}
 }
 
