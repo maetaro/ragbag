@@ -8,6 +8,7 @@ impl<'b, 'a> Collection<'a> {
         Collection { source: iter }
     }
     pub fn first(&mut self) -> Option<&i32> {
+        self.source.
         self.source.next()
     }
 }
