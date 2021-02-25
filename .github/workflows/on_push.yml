@@ -1,0 +1,59 @@
+name: Rust
+
+on: push
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        path: "ragbag"
+    - name: Run clippy
+      run: cargo clippy --all-targets --all-features -- -D warnings
+      working-directory: ragbag
+    - name: Build
+      run: cargo build --verbose
+      working-directory: ragbag
+    - name: Run tests
+      run: cargo test --verbose
+      working-directory: ragbag
+    - name: Run doc
+      run: cargo doc --no-deps --document-private-items
+      working-directory: ragbag
+    - name: Checkout (dest of deploy)
+      uses: actions/checkout@v2
+      with:
+        repository: "maetaro/maetaro.github.io"
+        ref: "master"
+        path: "maetaro.github.io"
+    - name: File Copy
+      run: |
+        rm -rf maetaro.github.io/ragbag
+        cp -rf ragbag/target/doc maetaro.github.io/ragbag
+    - name: Deploy Configuration
+      run: |
+          mkdir ~/.ssh
+          ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts
+          echo "${{ secrets.MY_ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          chmod 400 ~/.ssh/id_ed25519
+    - name: Push
+      env:
+        GITHUB_USER: "builduser"
+        GITHUB_EMAIL: "test-builduser@sample.com"
+        GITHUB_REPOSITORY: "maetaro/maetaro.github.io"
+      run: |
+          cd maetaro.github.io
+          git config --local user.name "${GITHUB_USER}"
+          git config --local user.email "${GITHUB_EMAIL}"
+          git remote set-url origin git@github.com:maetaro/maetaro.github.io.git
+          git config remote.origin.url "git@github.com:maetaro/maetaro.github.io.git"
+          git add ragbag
+          git commit -m "auto rebuilding site" || true
+          git push origin master:master || true
