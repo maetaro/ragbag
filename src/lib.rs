@@ -95,29 +95,6 @@ impl OrderExt for Vec<i32> {
 	}
 }
 
-/// Returns a collection with f.
-///
-/// # Arguments
-///
-/// * `values` - A vector that original collection.
-/// * `f` - Function that is called for every element of values.
-///
-/// # Examples
-///
-/// ```
-/// use ragbag::map;
-/// let x = vec![1, 2, 3];
-/// let y = map(x, &|z: i32| { z.to_string() });
-/// assert_eq!(y, vec!["1", "2", "3"]);
-/// ```
-pub fn map<T, F: Fn(i32) -> T>(values: Vec<i32>, f: &F) -> Vec<T> {
-    let mut b: Vec<T> = Vec::new();
-    for elem in values.to_owned() {
-        b.push(f(elem));
-    }
-    b
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -146,13 +123,4 @@ mod tests {
 		actual.order_by(&|a: i32, b: i32| a < b);
 		assert_eq!(actual, expected);
 	}
-
-    #[test]
-    fn map1() {
-        let x = vec![1, 2, 3];
-        let y = map(x, &|z: i32| { z.to_string() });
-        assert_eq!(y[0], "1");
-        assert_eq!(y[1], "2");
-        assert_eq!(y[2], "3");
-    }
 }
