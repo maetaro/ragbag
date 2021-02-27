@@ -41,7 +41,7 @@ pub fn shuffle(values: Vec<i32>) -> Vec<i32> {
 /// assert_eq!(result, 2.0);
 /// ```
 pub fn average(values: Vec<i32>) -> f32 {
-	values.iter().sum::<i32>() as f32 / values.len() as f32
+    values.iter().sum::<i32>() as f32 / values.len() as f32
 }
 
 /// Returns a sorted of collection.
@@ -59,39 +59,49 @@ pub fn average(values: Vec<i32>) -> f32 {
 /// assert_eq!(qsort(&result, &|a, b| a < b), vec![1,2,3]);
 /// ```
 pub fn qsort<F: Fn(i32, i32) -> bool>(list: &[i32], f: &F) -> Vec<i32> {
-	let len = list.len();
-	if len <= 1 {
-		return list.to_owned();
-	}
-	let mut rng = rand::thread_rng();
-	let piv_i = rng.gen_range(0..len);
-	let piv = list[piv_i];
-	let mut left: Vec<i32> = Vec::new();
-	let mut right: Vec<i32> = Vec::new();
+    let len = list.len();
+    if len <= 1 {
+        return list.to_owned();
+    }
+    let mut rng = rand::thread_rng();
+    let piv_i = rng.gen_range(0..len);
+    let piv = list[piv_i];
+    let mut left: Vec<i32> = Vec::new();
+    let mut right: Vec<i32> = Vec::new();
 
-	for i in list.to_owned() {
-		if f(piv, i) {
-			right.push(i);
-		}else{
-			left.push(i);
-		}
-	}
+    for i in list.to_owned() {
+        if f(piv, i) {
+            right.push(i);
+        } else {
+            left.push(i);
+        }
+    }
 
-	let mut concat: Vec<i32> = Vec::new();
-	let sorted_left =  &mut qsort(&left, f);
-	let sorted_right = &mut qsort(&right, f);
-	concat.append(sorted_left);
-	concat.append(sorted_right);
+    let mut concat: Vec<i32> = Vec::new();
+    let sorted_left = &mut qsort(&left, f);
+    let sorted_right = &mut qsort(&right, f);
+    concat.append(sorted_left);
+    concat.append(sorted_right);
 
-	concat
+    concat
 }
 
 trait OrderExt {
     fn order_by<F: Fn(i32, i32) -> bool>(&mut self, f: &F);
+	fn filter<F: Fn(i32) -> bool>(&mut self, f: &F);
 }
 impl OrderExt for Vec<i32> {
-	fn order_by<F: Fn(i32, i32) -> bool>(&mut self, f: &F) {
-		*self = qsort(self, f);
+    fn order_by<F: Fn(i32, i32) -> bool>(&mut self, f: &F) {
+        *self = qsort(self, f);
+    }
+	fn filter<F: Fn(i32) -> bool>(&mut self, f: &F){
+		let mut list: Vec<i32> = Vec::new();
+		for x in self.iter() {
+			if f(*x) {
+				list.push(*x)
+			}
+		}
+		*self = list;
 	}
 }
 
@@ -139,20 +149,27 @@ mod tests {
         assert!((y - 2.0f32).abs() < error_margin);
     }
 
-	#[test]
-	fn order_by1(){
-		let expected = vec![2,3,4,5,6];
-		let mut actual = vec![4,3,2,5,6];
-		actual.order_by(&|a: i32, b: i32| a < b);
-		assert_eq!(actual, expected);
-	}
+    #[test]
+    fn order_by1() {
+        let expected = vec![2, 3, 4, 5, 6];
+        let mut actual = vec![4, 3, 2, 5, 6];
+        actual.order_by(&|a: i32, b: i32| a < b);
+        assert_eq!(actual, expected);
+    }
 
     #[test]
     fn map1() {
         let x = vec![1, 2, 3];
-        let y = map(x, &|z: i32| { z.to_string() });
+        let y = map(x, &|z: i32| z.to_string());
         assert_eq!(y[0], "1");
         assert_eq!(y[1], "2");
         assert_eq!(y[2], "3");
+    }
+    #[test]
+    fn filter1() {
+        let mut actual = vec![1, 2, 3, 4, 5];
+        let expected = vec![1, 2];
+		actual.filter(&|a| a < 3);
+		assert_eq!(actual, expected);
     }
 }
