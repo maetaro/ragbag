@@ -30,6 +30,9 @@ jobs:
     - name: Run fmt
       run: cargo fmt --all -- --check
       working-directory: ragbag
+    - name: Run fmt
+      run: cargo fmt --all -- --check
+      working-directory: ragbag
     - name: Checkout (dest of deploy)
       uses: actions/checkout@v2
       with:
