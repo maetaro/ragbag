@@ -46,7 +46,7 @@ jobs:
           ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts
           echo "${{ secrets.MY_ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
           chmod 400 ~/.ssh/id_ed25519
-      - name: Push
+    - name: Push
       env:
         GITHUB_USER: "builduser"
         GITHUB_EMAIL: "test-builduser@sample.com"
