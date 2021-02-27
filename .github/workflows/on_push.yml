@@ -28,10 +28,7 @@ jobs:
       run: cargo doc --no-deps --document-private-items
       working-directory: ragbag
     - name: Run fmt
-      run: cargo fmt --all -- --check
-      working-directory: ragbag
-    - name: Run fmt
-      run: cargo fmt --all -- --check
+      run: cargo fmt --all --check
       working-directory: ragbag
     - name: Checkout (dest of deploy)
       uses: actions/checkout@v2
