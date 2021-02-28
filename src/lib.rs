@@ -87,21 +87,21 @@ pub fn qsort<F: Fn(i32, i32) -> bool>(list: &[i32], f: &F) -> Vec<i32> {
 }
 
 trait OrderExt {
-    fn order_by<F: Fn(i32, i32) -> bool>(&mut self, f: &F);
-	fn filter<F: Fn(i32) -> bool>(&mut self, f: &F);
+    fn order_by<F: Fn(i32, i32) -> bool>(&self, f: &F) -> Self;
+	fn filter<F: Fn(i32) -> bool>(&self, f: &F) -> Self;
 }
 impl OrderExt for Vec<i32> {
-    fn order_by<F: Fn(i32, i32) -> bool>(&mut self, f: &F) {
-        *self = qsort(self, f);
+    fn order_by<F: Fn(i32, i32) -> bool>(&self, f: &F)  -> Vec<i32> {
+        qsort(self, f)
     }
-	fn filter<F: Fn(i32) -> bool>(&mut self, f: &F){
+	fn filter<F: Fn(i32) -> bool>(&self, f: &F) -> Vec<i32> {
 		let mut list: Vec<i32> = Vec::new();
 		for x in self.iter() {
 			if f(*x) {
 				list.push(*x)
 			}
 		}
-		*self = list;
+		list
 	}
 }
 
@@ -152,9 +152,8 @@ mod tests {
     #[test]
     fn order_by1() {
         let expected = vec![2, 3, 4, 5, 6];
-        let mut actual = vec![4, 3, 2, 5, 6];
-        actual.order_by(&|a: i32, b: i32| a < b);
-        assert_eq!(actual, expected);
+        let actual = vec![4, 3, 2, 5, 6];
+        assert_eq!(actual.order_by(&|a: i32, b: i32| a < b), expected);
     }
 
     #[test]
@@ -167,9 +166,8 @@ mod tests {
     }
     #[test]
     fn filter1() {
-        let mut actual = vec![1, 2, 3, 4, 5];
+        let actual = vec![1, 2, 3, 4, 5];
         let expected = vec![1, 2];
-		actual.filter(&|a| a < 3);
-		assert_eq!(actual, expected);
+		assert_eq!(actual.filter(&|a| a < 3), expected);
     }
 }
