@@ -86,9 +86,10 @@ pub fn qsort<F: Fn(i32, i32) -> bool>(list: &[i32], f: &F) -> Vec<i32> {
     concat
 }
 
-trait OrderExt {
+pub trait OrderExt {
     fn order_by<F: Fn(i32, i32) -> bool>(&self, f: &F) -> Self;
     fn filter<F: Fn(i32) -> bool>(&self, f: &F) -> Self;
+    fn map<T, F: Fn(i32) -> T>(&self, f: &F) -> Vec<T>;
 }
 impl OrderExt for Vec<i32> {
     fn order_by<F: Fn(i32, i32) -> bool>(&self, f: &F) -> Vec<i32> {
@@ -103,29 +104,28 @@ impl OrderExt for Vec<i32> {
         }
         list
     }
-}
-
-/// Returns a collection with f.
-///
-/// # Arguments
-///
-/// * `values` - A vector that original collection.
-/// * `f` - Function that is called for every element of values.
-///
-/// # Examples
-///
-/// ```
-/// use ragbag::map;
-/// let x = vec![1, 2, 3];
-/// let y = map(x, &|z: i32| { z.to_string() });
-/// assert_eq!(y, vec!["1", "2", "3"]);
-/// ```
-pub fn map<T, F: Fn(i32) -> T>(values: Vec<i32>, f: &F) -> Vec<T> {
-    let mut b: Vec<T> = Vec::new();
-    for elem in values.to_owned() {
-        b.push(f(elem));
+    /// Returns a collection with f.
+    ///
+    /// # Arguments
+    ///
+    /// * `values` - A vector that original collection.
+    /// * `f` - Function that is called for every element of values.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ragbag::OrderExt;
+    /// let x = vec![1, 2, 3];
+    /// let y = x.map(&|z: i32| { z.to_string() });
+    /// assert_eq!(y, vec!["1", "2", "3"]);
+    /// ```
+    fn map<T, F: Fn(i32) -> T>(&self, f: &F) -> Vec<T> {
+        let mut b: Vec<T> = Vec::new();
+        for elem in self.to_owned() {
+            b.push(f(elem));
+        }
+        b
     }
-    b
 }
 
 #[cfg(test)]
@@ -159,7 +159,7 @@ mod tests {
     #[test]
     fn map1() {
         let x = vec![1, 2, 3];
-        let y = map(x, &|z: i32| z.to_string());
+        let y = x.map(&|z: i32| z.to_string());
         assert_eq!(y[0], "1");
         assert_eq!(y[1], "2");
         assert_eq!(y[2], "3");
