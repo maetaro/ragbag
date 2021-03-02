@@ -94,9 +94,35 @@ impl OrderExt for Vec<i32> {
     fn average(&self) -> f32 {
         self.iter().sum::<i32>() as f32 / self.len() as f32
     }
+	/// Returns a average of collection.
+    ///
+    /// # Arguments
+    ///
+    /// * `values` - A vector that original collection.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ragbag::OrderExt;
+    /// let result = vec![4,5,1,2,3].order_by(&|a,b| a < b);
+    /// assert_eq!(result, vec![1,2,3,4,5]);
+    /// ```
     fn order_by<F: Fn(i32, i32) -> bool>(&self, f: &F) -> Vec<i32> {
         qsort(self, f)
     }
+	/// Returns a average of collection.
+    ///
+    /// # Arguments
+    ///
+    /// * `values` - A vector that original collection.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ragbag::OrderExt;
+    /// let result = vec![1,2,3,4,5].filter(&|a| a < 3);
+    /// assert_eq!(result, vec![1,2]);
+    /// ```
     fn filter<F: Fn(i32) -> bool>(&self, f: &F) -> Vec<i32> {
         let mut list: Vec<i32> = Vec::new();
         for x in self.iter() {
