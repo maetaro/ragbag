@@ -1,48 +1,4 @@
 use rand::Rng;
-/// Returns a shuffled collection.
-///
-/// # Arguments
-///
-/// * `values` - A vector that original collection.
-///
-/// # Examples
-///
-/// ```
-/// use ragbag::shuffle;
-/// let vec = shuffle(vec![1,2,3]);
-/// ```
-pub fn shuffle(values: Vec<i32>) -> Vec<i32> {
-    use std::collections::HashSet;
-    let len = values.len();
-    let mut rng = rand::thread_rng();
-    let mut y: Vec<i32> = vec![0; len];
-    let mut tmp = HashSet::new();
-    while tmp.len() != len {
-        let i = rng.gen_range(0..len);
-        tmp.insert(i);
-    }
-    for (i, v) in tmp.iter().enumerate() {
-        y[i] = values[*v];
-    }
-    y
-}
-
-/// Returns a average of collection.
-///
-/// # Arguments
-///
-/// * `values` - A vector that original collection.
-///
-/// # Examples
-///
-/// ```
-/// use ragbag::average;
-/// let result = average(vec![1,2,3]);
-/// assert_eq!(result, 2.0);
-/// ```
-pub fn average(values: Vec<i32>) -> f32 {
-    values.iter().sum::<i32>() as f32 / values.len() as f32
-}
 
 /// Returns a sorted of collection.
 /// using quick sort.
@@ -87,11 +43,57 @@ pub fn qsort<F: Fn(i32, i32) -> bool>(list: &[i32], f: &F) -> Vec<i32> {
 }
 
 pub trait OrderExt {
+    fn shuffle(&self) -> Vec<i32>;
+    fn average(&self) -> f32;
     fn order_by<F: Fn(i32, i32) -> bool>(&self, f: &F) -> Self;
     fn filter<F: Fn(i32) -> bool>(&self, f: &F) -> Self;
     fn map<T, F: Fn(i32) -> T>(&self, f: &F) -> Vec<T>;
 }
 impl OrderExt for Vec<i32> {
+    /// Returns a shuffled collection.
+    ///
+    /// # Arguments
+    ///
+    /// * `values` - A vector that original collection.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ragbag::OrderExt;
+    /// let vec = vec![1,2,3].shuffle();
+    /// ```
+    fn shuffle(&self) -> Vec<i32> {
+        use std::collections::HashSet;
+        let len = self.len();
+        let mut rng = rand::thread_rng();
+        let mut y: Vec<i32> = vec![0; len];
+        let mut tmp = HashSet::new();
+        while tmp.len() != len {
+            let i = rng.gen_range(0..len);
+            tmp.insert(i);
+        }
+        for (i, v) in tmp.iter().enumerate() {
+            y[i] = self[*v];
+        }
+        y
+    }
+
+    /// Returns a average of collection.
+    ///
+    /// # Arguments
+    ///
+    /// * `values` - A vector that original collection.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ragbag::OrderExt;
+    /// let result = vec![1,2,3].average();
+    /// assert_eq!(result, 2.0);
+    /// ```
+    fn average(&self) -> f32 {
+        self.iter().sum::<i32>() as f32 / self.len() as f32
+    }
     fn order_by<F: Fn(i32, i32) -> bool>(&self, f: &F) -> Vec<i32> {
         qsort(self, f)
     }
@@ -135,7 +137,7 @@ mod tests {
     #[test]
     fn shuffle1() {
         let x = vec![1, 2, 3];
-        let y = shuffle(x);
+        let y = x.shuffle();
         assert_eq!(y.len(), 3);
         let actual: i32 = y.iter().sum();
         assert_eq!(actual, 6);
@@ -144,7 +146,7 @@ mod tests {
     #[test]
     fn average1() {
         let x = vec![1, 2, 3];
-        let y = average(x);
+        let y = x.average();
         let error_margin = f32::EPSILON;
         assert!((y - 2.0f32).abs() < error_margin);
     }
